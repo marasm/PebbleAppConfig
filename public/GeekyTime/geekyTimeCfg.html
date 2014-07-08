@@ -46,7 +46,7 @@
       }
       function getCurrConfigFromUrl()
       {
-        $("#tempScale").val($.url.param("tempScale"));
+        $("#tempScale").val($.url().param("tempScale"));
       }
 
       $().ready(function() {
