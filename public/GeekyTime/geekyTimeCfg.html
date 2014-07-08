@@ -48,12 +48,12 @@
       function getUrlParamByName(name)
       {
          var results = new RegExp('[\?&amp;]' + name + '=([^&amp;#]*)').exec(window.location.href);
-         return results[1] || 0;
+         return results[1] || null;
       }
       
       function getCurrConfigFromUrl()
       {
-        $("#tempScale").val(getUrlParamByName("tempScale"));
+        $("input[name='tempScale']").val(getUrlParamByName("tempScale"));
       }
 
       $().ready(function() {
