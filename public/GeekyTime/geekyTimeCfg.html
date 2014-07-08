@@ -44,8 +44,13 @@
         }
         return options;
       }
+      function getCurrConfigFromUrl()
+      {
+        $("#tempScale").val($.url.param("tempScale"));
+      }
 
       $().ready(function() {
+        getCurrConfigFromUrl();
         $("#b-cancel").click(function() {
           console.log("Cancel");
           document.location = "pebblejs://close";
