@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Geeky Time Configuration</title>
+    <title>Geeky Time Config</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
-    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-    <script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.css" />
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.js"></script>
   </head>
   <body>
     <div data-role="page" id="main">
       <div data-role="header" class="jqm-header">
-        <h1>Geeky Time Configuration</h1>
+        <h1>Geeky Time Config</h1>
       </div>
 
       <div data-role="content">
@@ -20,11 +20,11 @@
         <fieldset data-role="controlgroup">
           <legend>Temperature Scale:</legend>
           
-          <input type="radio" name="tempScale" id="tempScale1" value="F" checked="checked">
-          <label for="tempScale1">Fahrenheit</label>
+          <input type="radio" name="tempScale" id="tempScaleF" value="F"/>
+          <label for="tempScaleF">Fahrenheit</label>
 
-          <input type="radio" name="tempScale" id="tempScale2" value="C">
-          <label for="tempScale2">Celcius</label>
+          <input type="radio" name="tempScale" id="tempScaleC" value="C"/>
+          <label for="tempScaleC">Celcius</label>
         </fieldset>
         
 
@@ -40,24 +40,28 @@
     <script>
       function saveOptions() {
         var options = {
-          'tempScale': $("#tempScale").val(),
+          'tempScale': $("input[name='tempScale']:checked").val()
         }
         return options;
       }
       
       function getUrlParamByName(name)
       {
-         var results = new RegExp('[\?&amp;]' + name + '=([^&amp;#]*)').exec(window.location.href);
+         var results = 
+           new RegExp('[\?&amp;]' + name + '=([^&amp;#]*)').exec(window.location.href);
          return results[1] || null;
       }
       
-      function getCurrConfigFromUrl()
+      function applyCurrConfigFromUrl()
       {
-        $("input[name='tempScale']").val(getUrlParamByName("tempScale"));
+        var urlTempScale = getUrlParamByName("tempScale");
+        console.log("tempScale from url=" + urlTempScale);
+        $("#tempScale" + urlTempScale).prop('checked', true);
+        $("input[type='radio'][name='tempScale']").checkboxradio("refresh");
       }
 
       $().ready(function() {
-        getCurrConfigFromUrl();
+        applyCurrConfigFromUrl();
         $("#b-cancel").click(function() {
           console.log("Cancel");
           document.location = "pebblejs://close";
@@ -65,13 +69,12 @@
 
         $("#b-submit").click(function() {
           console.log("Submit");
-
+          console.log("Options: " + JSON.stringify(saveOptions()));
           var location = "pebblejs://close#" + encodeURIComponent(JSON.stringify(saveOptions()));
           console.log("Warping to: " + location);
           console.log(location);
           document.location = location;
         });
-
       });
     </script>
   </body>
