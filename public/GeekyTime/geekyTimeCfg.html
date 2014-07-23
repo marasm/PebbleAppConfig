@@ -26,6 +26,9 @@
           <input type="radio" name="tempScale" id="tempScaleC" value="C"/>
           <label for="tempScaleC">Celcius</label>
         </fieldset>
+
+        <label for="tempCorrect">Temperature Correction (K):</label>
+        <input type="text" name="tempCorrect" id="tempCorrect" value="0"/>
         
 
         <div class="ui-body ui-body-b">
@@ -40,7 +43,8 @@
     <script>
       function saveOptions() {
         var options = {
-          'tempScale': $("input[name='tempScale']:checked").val()
+          'tempScale': $("input[name='tempScale']:checked").val(),
+          'tempCorrect': $("#tempCorrect").val()
         }
         return options;
       }
@@ -55,9 +59,12 @@
       function applyCurrConfigFromUrl()
       {
         var urlTempScale = getUrlParamByName("tempScale");
+        var urlTempCorrect = getUrlParamByName("tempCorrect");
         console.log("tempScale from url=" + urlTempScale);
+        console.log("tempCorrect from url=" + urlTempCorrect);
         $("#tempScale" + urlTempScale).prop('checked', true);
         $("input[type='radio'][name='tempScale']").checkboxradio("refresh");
+        $("#tempCorrect").val(urlTempCorrect);
       }
 
       $().ready(function() {
