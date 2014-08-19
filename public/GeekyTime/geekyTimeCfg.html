@@ -29,6 +29,16 @@
 
         <label for="tempCorrect">Temperature Correction (K):</label>
         <input type="number" name="tempCorrect" id="tempCorrect" value="0"/>
+
+        <fieldset data-role="controlgroup">
+          <legend>Vibrate on Bluetooth dis/connect:</legend>
+          
+          <input type="radio" name="btVibrate" id="btVibrateOn" value="On"/>
+          <label for="btVibrateOn">On</label>
+
+          <input type="radio" name="btVibrate" id="btVibrateOff" value="Off"/>
+          <label for="btVibrateOff">Off</label>
+        </fieldset>
         
 
         <div class="ui-body ui-body-b">
@@ -44,26 +54,33 @@
       function saveOptions() {
         var options = {
           'tempScale': $("input[name='tempScale']:checked").val(),
-          'tempCorrect': $("#tempCorrect").val()
+          'tempCorrect': $("#tempCorrect").val(),
+          'btVibrate': $("input[name='btVibrate']:checked").val()
         }
         return options;
       }
       
       function getUrlParamByName(name)
       {
-         var results = 
-           new RegExp('[\?&amp;]' + name + '=([^&amp;#]*)').exec(window.location.href);
-         return results[1] || null;
+        var results = new RegExp('[\?&amp;]' + name + '=([^&amp;#]*)').exec(window.location.href);
+        if (results)
+          return results[1];
+        else
+          return null;
       }
       
       function applyCurrConfigFromUrl()
       {
         var urlTempScale = getUrlParamByName("tempScale");
+        var urlBtVibrate = getUrlParamByName("btVibrate");
         var urlTempCorrect = getUrlParamByName("tempCorrect");
         console.log("tempScale from url=" + urlTempScale);
         console.log("tempCorrect from url=" + urlTempCorrect);
+        console.log("btVibrate from url=" + urlBtVibrate);
         $("#tempScale" + urlTempScale).prop('checked', true);
+        $("#btVibrate" + urlBtVibrate).prop('checked', true);
         $("input[type='radio'][name='tempScale']").checkboxradio("refresh");
+        $("input[type='radio'][name='btVibrate']").checkboxradio("refresh");
         $("#tempCorrect").val(urlTempCorrect);
       }
 
