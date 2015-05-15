@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.css" />
+    <link rel="stylesheet" href="../css/geekyTime.css" />
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="http://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.js"></script>
   </head>
@@ -16,30 +17,34 @@
 
       <div data-role="content">
 
+        <label for="autoLocation">Detect Location Automatically:</label>
+        <select name="autoLocation" id="autoLocation" data-role="slider"
+                onchange="toggleLocationField(this.value)">
+        	<option value="Off">Off</option>
+        	<option value="On">On</option>
+        </select>
 
-        <fieldset data-role="controlgroup">
-          <legend>Temperature Scale:</legend>
-          
-          <input type="radio" name="tempScale" id="tempScaleF" value="F"/>
-          <label for="tempScaleF">Fahrenheit</label>
+        <div id="manLocationSection">
+          <label for="manLocation">Location (City, Country Code):</label>
+          <input type="number" name="manLocation" id="manLocation" value=""/>
+        </div>
 
-          <input type="radio" name="tempScale" id="tempScaleC" value="C"/>
-          <label for="tempScaleC">Celcius</label>
-        </fieldset>
+        <div class="longerToggle">
+          <label for="tempScale">Temperature Scale:</label>
+          <select name="tempScale" id="tempScale" data-role="slider">
+            <option value="C">Celcius</option>
+            <option value="F">Fahrenheit</option>
+          </select>
+        </div>
 
         <label for="tempCorrect">Temperature Correction (K):</label>
         <input type="number" name="tempCorrect" id="tempCorrect" value="0"/>
 
-        <fieldset data-role="controlgroup">
-          <legend>Vibrate on Bluetooth dis/connect:</legend>
-          
-          <input type="radio" name="btVibrate" id="btVibrateOn" value="On"/>
-          <label for="btVibrateOn">On</label>
-
-          <input type="radio" name="btVibrate" id="btVibrateOff" value="Off"/>
-          <label for="btVibrateOff">Off</label>
-        </fieldset>
-        
+        <label for="btVibrate">Vibrate on Bluetooth dis/connect:</label>
+        <select name="btVibrate" id="btVibrate" data-role="slider">
+        	<option value="Off">Off</option>
+        	<option value="On">On</option>
+        </select>
 
         <div class="ui-body ui-body-b">
           <fieldset class="ui-grid-a">
@@ -51,7 +56,19 @@
       </div>
     </div>
     <script>
-      function saveOptions() {
+      function toggleLocationField(autoLocValue)
+      {
+        if('Off' === autoLocValue)
+        {
+          $("#manLocationSection").show();
+        }
+        else
+        {
+          $("#manLocationSection").hide();
+        }
+      }
+      function saveOptions()
+      {
         var options = {
           'tempScale': $("input[name='tempScale']:checked").val(),
           'tempCorrect': $("#tempCorrect").val(),
@@ -59,7 +76,7 @@
         }
         return options;
       }
-      
+
       function getUrlParamByName(name)
       {
         var results = new RegExp('[\?&amp;]' + name + '=([^&amp;#]*)').exec(window.location.href);
@@ -68,20 +85,30 @@
         else
           return null;
       }
-      
+
       function applyCurrConfigFromUrl()
       {
         var urlTempScale = getUrlParamByName("tempScale");
         var urlBtVibrate = getUrlParamByName("btVibrate");
         var urlTempCorrect = getUrlParamByName("tempCorrect");
+        var urlAutoLoc = getUrlParamByName("autoLocation");
         console.log("tempScale from url=" + urlTempScale);
         console.log("tempCorrect from url=" + urlTempCorrect);
         console.log("btVibrate from url=" + urlBtVibrate);
-        $("#tempScale" + urlTempScale).prop('checked', true);
-        $("#btVibrate" + urlBtVibrate).prop('checked', true);
-        $("input[type='radio'][name='tempScale']").checkboxradio("refresh");
-        $("input[type='radio'][name='btVibrate']").checkboxradio("refresh");
+        $("#tempScale").val(urlTempScale);
+        $("#tempScale").slider('refresh');
+        $("#btVibrate").val(urlBtVibrate);
+        $("#btVibrate").slider('refresh');
+        $("#autoLocation").val(urlAutoLoc);
+        $("#autoLocation").slider('refresh');
+        toggleLocationField(urlAutoLoc);
         $("#tempCorrect").val(urlTempCorrect);
+      }
+
+      function isFormValid()
+      {
+        console.log("Validating form inputs");
+        return false;
       }
 
       $().ready(function() {
@@ -93,11 +120,14 @@
 
         $("#b-submit").click(function() {
           console.log("Submit");
-          console.log("Options: " + JSON.stringify(saveOptions()));
-          var location = "pebblejs://close#" + encodeURIComponent(JSON.stringify(saveOptions()));
-          console.log("Warping to: " + location);
-          console.log(location);
-          document.location = location;
+          if(isFormValid())
+          {
+            console.log("Options: " + JSON.stringify(saveOptions()));
+            var location = "pebblejs://close#" + encodeURIComponent(JSON.stringify(saveOptions()));
+            console.log("Warping to: " + location);
+            console.log(location);
+            document.location = location;
+          }
         });
       });
     </script>
