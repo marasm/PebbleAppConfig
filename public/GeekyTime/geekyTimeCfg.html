@@ -17,16 +17,22 @@
 
       <div data-role="content">
 
-        <label for="autoLocation">Detect Location Automatically:</label>
-        <select name="autoLocation" id="autoLocation" data-role="slider"
-                onchange="toggleLocationField(this.value)">
-        	<option value="Off">Off</option>
-        	<option value="On">On</option>
-        </select>
+        <div id="locationSelectSection">
+          <label for="autoLocation">Detect Location Automatically:</label>
+          <select name="autoLocation" id="autoLocation" data-role="slider"
+                  onchange="toggleLocationField(this.value)">
+          	<option value="Off">Off</option>
+          	<option value="On">On</option>
+          </select>
 
-        <div id="manLocationSection">
-          <label for="manLocation">Location (City, Country Code):</label>
-          <input type="number" name="manLocation" id="manLocation" value=""/>
+          <div id="manLocationSection">
+            <label for="manLocation">Location (City, Country Code):</label>
+            <input name="manLocation" id="manLocation" value=""/>
+            <div id="manLocationError" class="validationError">
+              Enter location!
+            </div>
+          </div>
+          <br/>
         </div>
 
         <div class="longerToggle">
@@ -36,15 +42,18 @@
             <option value="F">Fahrenheit</option>
           </select>
         </div>
+        <br/>
 
         <label for="tempCorrect">Temperature Correction (K):</label>
         <input type="number" name="tempCorrect" id="tempCorrect" value="0"/>
+        <br/>
 
         <label for="btVibrate">Vibrate on Bluetooth dis/connect:</label>
         <select name="btVibrate" id="btVibrate" data-role="slider">
         	<option value="Off">Off</option>
         	<option value="On">On</option>
         </select>
+        <br/>
 
         <div class="ui-body ui-body-b">
           <fieldset class="ui-grid-a">
@@ -67,12 +76,27 @@
           $("#manLocationSection").hide();
         }
       }
+
+      function toggleSelectLocationSection(isLocSelectionAllwed)
+      {
+        if ('true' === isLocSelectionAllwed)
+        {
+          $("#locationSelectSection").show();
+        }
+        else
+        {
+          $("#locationSelectSection").hide();
+        }
+      }
+
       function saveOptions()
       {
         var options = {
-          'tempScale': $("input[name='tempScale']:checked").val(),
+          'tempScale':   $("#tempScale").val(),
           'tempCorrect': $("#tempCorrect").val(),
-          'btVibrate': $("input[name='btVibrate']:checked").val()
+          'btVibrate':   $("#btVibrate").val(),
+          'autoLocation':   $("#autoLocation").val(),
+          'manLocation':   $("#manLocation").val()
         }
         return options;
       }
@@ -92,23 +116,55 @@
         var urlBtVibrate = getUrlParamByName("btVibrate");
         var urlTempCorrect = getUrlParamByName("tempCorrect");
         var urlAutoLoc = getUrlParamByName("autoLocation");
+        var urlManualLoc = getUrlParamByName("manLocation");
+        var urlLocSelectAllowed = getUrlParamByName("allowLocSelect");
+
         console.log("tempScale from url=" + urlTempScale);
         console.log("tempCorrect from url=" + urlTempCorrect);
         console.log("btVibrate from url=" + urlBtVibrate);
-        $("#tempScale").val(urlTempScale);
-        $("#tempScale").slider('refresh');
-        $("#btVibrate").val(urlBtVibrate);
-        $("#btVibrate").slider('refresh');
+        console.log("locSelectAllowed from url=" + urlLocSelectAllowed);
+        console.log("autoLocation from url=" + urlAutoLoc);
+        console.log("manLocation from url=" + urlManualLoc);
+
+        toggleSelectLocationSection(urlLocSelectAllowed);
+
         $("#autoLocation").val(urlAutoLoc);
         $("#autoLocation").slider('refresh');
+        $("#manLocation").val(urlManualLoc);
         toggleLocationField(urlAutoLoc);
+
+        $("#tempScale").val(urlTempScale);
+        $("#tempScale").slider('refresh');
+
+        $("#btVibrate").val(urlBtVibrate);
+        $("#btVibrate").slider('refresh');
+
         $("#tempCorrect").val(urlTempCorrect);
       }
 
       function isFormValid()
       {
         console.log("Validating form inputs");
-        return false;
+        var isAutoLocEnabled = 'On' === $("#autoLocation").val();
+        var manLocValue = $("#manLocation").val();
+
+        if (!isAutoLocEnabled &&
+          (manLocValue == null ||
+            manLocValue == 'undefined' ||
+            manLocValue.trim() == ''
+          ))
+        {
+          $("#manLocationError").show();
+          console.log("Inputs invalid");
+          return false;
+        }
+        else
+        {
+          $("#manLocationError").hide();
+          console.log("Inputs valid");
+          return true;
+        }
+
       }
 
       $().ready(function() {
