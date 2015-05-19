@@ -22,7 +22,7 @@
           <select name="autoLocation" id="autoLocation" data-role="slider"
                   onchange="toggleLocationField(this.value)">
           	<option value="Off">Off</option>
-          	<option value="On">On</option>
+          	<option value="On" >On</option>
           </select>
 
           <div id="manLocationSection">
@@ -95,7 +95,7 @@
           'tempScale':   $("#tempScale").val(),
           'tempCorrect': $("#tempCorrect").val(),
           'btVibrate':   $("#btVibrate").val(),
-          'autoLocation':   $("#autoLocation").val(),
+          'autoLocation':  $("#autoLocation").val(),
           'manLocation':   $("#manLocation").val()
         }
         return options;
@@ -127,8 +127,15 @@
         console.log("manLocation from url=" + urlManualLoc);
 
         toggleSelectLocationSection(urlLocSelectAllowed);
-
-        $("#autoLocation").val(urlAutoLoc);
+        if (urlAutoLoc != null && urlAutoLoc != 'undefined' &&
+            urlAutoLoc.trim().length >0)
+        {
+          $("#autoLocation").val(urlAutoLoc);
+        }
+        else
+        {
+          $("#autoLocation").val('On');
+        }
         $("#autoLocation").slider('refresh');
         $("#manLocation").val(urlManualLoc);
         toggleLocationField(urlAutoLoc);
@@ -147,8 +154,10 @@
         console.log("Validating form inputs");
         var isAutoLocEnabled = 'On' === $("#autoLocation").val();
         var manLocValue = $("#manLocation").val();
+        var urlLocSelectAllowed = getUrlParamByName("allowLocSelect");
 
-        if (!isAutoLocEnabled &&
+        if (urlLocSelectAllowed &&
+          !isAutoLocEnabled &&
           (manLocValue == null ||
             manLocValue == 'undefined' ||
             manLocValue.trim() == ''
