@@ -43,6 +43,15 @@
           </select>
         </div>
         <br/>
+        
+        <div class="longerToggle" id="dateFormatSection">
+          <label for="dateFormat">Date Format:</label>
+          <select name="dateFormat" id="dateFormat" data-role="slider">
+            <option value="mmdd">MM-DD</option>
+            <option value="ddmm">DD-MM</option>
+          </select>
+        </div>
+        <br/>
 
         <label for="tempCorrect">Temperature Correction (K):</label>
         <input type="number" name="tempCorrect" id="tempCorrect" value="0"/>
@@ -62,6 +71,7 @@
             </fieldset>
           </div>
         </div>
+        <div data-role="footer" class="jqm-footer" id="faceVersionDiv" align="center">WatchFace version unknown</div>
       </div>
     </div>
     <script>
@@ -96,7 +106,8 @@
           'tempCorrect': $("#tempCorrect").val(),
           'btVibrate':   $("#btVibrate").val(),
           'autoLocation':  $("#autoLocation").val(),
-          'manLocation':   $("#manLocation").val()
+          'manLocation':   $("#manLocation").val(),
+          'dateFormat':   $("#dateFormat").val()
         }
         return options;
       }
@@ -118,6 +129,8 @@
         var urlAutoLoc = getUrlParamByName("autoLocation");
         var urlManualLoc = getUrlParamByName("manLocation");
         var urlLocSelectAllowed = getUrlParamByName("allowLocSelect");
+        var urlDateFormat = getUrlParamByName("dateFormat");
+        var urlFaceVersion = getUrlParamByName("faceVersion");
 
         console.log("tempScale from url=" + urlTempScale);
         console.log("tempCorrect from url=" + urlTempCorrect);
@@ -125,6 +138,8 @@
         console.log("locSelectAllowed from url=" + urlLocSelectAllowed);
         console.log("autoLocation from url=" + urlAutoLoc);
         console.log("manLocation from url=" + urlManualLoc);
+        console.log("dateFormat from url=" + urlDateFormat);
+        console.log("faceVersion from url=" + urlFaceVersion);
 
         toggleSelectLocationSection(urlLocSelectAllowed);
         if (urlAutoLoc != null && urlAutoLoc != 'undefined' &&
@@ -147,6 +162,20 @@
         $("#btVibrate").slider('refresh');
 
         $("#tempCorrect").val(urlTempCorrect);
+        
+        //version dependent features
+        $("#dateFormatSection").hide();  
+        if (urlFaceVersion !== null && urlFaceVersion !== 'undefined')
+        {
+          if (urlFaceVersion >= '3.0')
+          {
+            $("#dateFormatSection").show();  
+            $("#dateFormat").val(urlDateFormat);
+            $("#dateFormat").slider('refresh');  
+            
+            $("#faceVersionDiv").html('WatchFace version ' + urlFaceVersion);
+          }
+        }
       }
 
       function isFormValid()
