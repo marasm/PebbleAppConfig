@@ -55,6 +55,9 @@
 
         <label for="tempCorrect">Temperature Correction (K):</label>
         <input type="number" name="tempCorrect" id="tempCorrect" value="0"/>
+        <div id="tempCorrectError" class="validationError">
+          Enter a valid number!
+        </div>
         <br/>
 
         <label for="btVibrate">Vibrate on Bluetooth dis/connect:</label>
@@ -189,6 +192,7 @@
         var isAutoLocEnabled = 'On' === $("#autoLocation").val();
         var manLocValue = $("#manLocation").val();
         var urlLocSelectAllowed = getUrlParamByName("allowLocSelect");
+        var errorsFound = false;
 
         if (urlLocSelectAllowed &&
           !isAutoLocEnabled &&
@@ -198,15 +202,28 @@
           ))
         {
           $("#manLocationError").show();
-          console.log("Inputs invalid");
-          return false;
+          console.log("Man location invalid");
+          errorsFound = true;
         }
         else
         {
           $("#manLocationError").hide();
-          console.log("Inputs valid");
-          return true;
+          console.log("Man location valid");
         }
+        
+        if ($("#tempCorrect").val() === '' || isNaN($("#tempCorrect").val()))
+        {
+          $("#tempCorrectError").show();
+          console.log("Temp correction invalid");
+          errorsFound = true;
+        }
+        else
+        {
+          $("#tempCorrectError").hide();
+          console.log("Temp correction valid");          
+        }
+
+        return !errorsFound;
 
       }
 
