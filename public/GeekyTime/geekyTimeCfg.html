@@ -59,6 +59,12 @@
           Enter a valid number!
         </div>
         <br/>
+        
+        <div id="refreshIntrvlSection">
+          <label for="refreshIntrvl">Weather Refresh Interval (minutes):</label>
+          <input type="range" name="refreshIntrvl" id="refreshIntrvl" min="1" max="60" value="30">
+          <br/>
+        </div>
 
         <label for="btVibrate">Vibrate on Bluetooth dis/connect:</label>
         <select name="btVibrate" id="btVibrate" data-role="slider">
@@ -110,7 +116,8 @@
           'btVibrate':   $("#btVibrate").val(),
           'autoLocation':  $("#autoLocation").val(),
           'manLocation':   $("#manLocation").val(),
-          'dateFormat':   $("#dateFormat").val()
+          'dateFormat':   $("#dateFormat").val(),
+          'refreshIntrvl':   $("#refreshIntrvl").val()
         }
         return options;
       }
@@ -139,6 +146,7 @@
         var urlLocSelectAllowed = getUrlParamByName("allowLocSelect");
         var urlDateFormat = getUrlParamByName("dateFormat");
         var urlFaceVersion = getUrlParamByName("faceVersion");
+        var urlRefreshIntrvl = getUrlParamByName("refreshIntrvl");
 
         console.log("tempScale from url=" + urlTempScale);
         console.log("tempCorrect from url=" + urlTempCorrect);
@@ -148,6 +156,7 @@
         console.log("manLocation from url=" + urlManualLoc);
         console.log("dateFormat from url=" + urlDateFormat);
         console.log("faceVersion from url=" + urlFaceVersion);
+        console.log("refreshIntrvl from url=" + urlRefreshIntrvl);
 
         toggleSelectLocationSection(urlLocSelectAllowed);
         if (urlAutoLoc != null && urlAutoLoc != 'undefined' &&
@@ -171,8 +180,12 @@
 
         $("#tempCorrect").val(urlTempCorrect);
         
+        $("#refreshIntrvl").val(urlRefreshIntrvl);
+        $("#refreshIntrvl").slider('refresh');
+        
         //version dependent features
         $("#dateFormatSection").hide();  
+        $("#refreshIntrvlSection").hide();  
         if (urlFaceVersion !== null && urlFaceVersion !== 'undefined')
         {
           if (urlFaceVersion >= '3.0')
@@ -182,6 +195,10 @@
             $("#dateFormat").slider('refresh');  
             
             $("#faceVersionDiv").html('WatchFace version ' + urlFaceVersion);
+          }
+          if (urlFaceVersion >= '4.0')
+          {
+            $("#refreshIntrvlSection").show();
           }
         }
       }
